@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: back-ingress
+  annotations:
+    alb.ingress.kubernetes.io/load-balancer-type: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/healthcheck-path: /
+spec:
+  ingressClassName: alb
+  rules:
+  - host: k8s-default-shopfron-fee55c370f-1422469502.ap-northeast-2.elb.amazonaws.com
+    http:
+      paths:
+      - path: /couponapi
+        pathType: Prefix
+        backend:
+          service:
+            name: coupon-api
+            port:
+              number: 8080
+      - path: /shopback
+        pathType: Prefix
+        backend:
+          service:
+            name: shop-back
+            port:
+              number: 8080

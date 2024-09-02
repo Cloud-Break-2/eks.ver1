@@ -1,0 +1,36 @@
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: efs-sc
+provisioner: efs.csi.aws.com
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: efs-pv
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany  # EFS는 RWX 모드를 지원
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: "efs-sc"  # EFS StorageClass 이름
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: "fs-033a785b553050faf"  # EFS 파일 시스템 ID
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: efs-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: "efs-sc"  # StorageClass 이름을 사용
+  resources:
+    requests:
+      storage: 5Gi
